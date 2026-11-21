@@ -1,0 +1,8 @@
+/__pycache__
+requirements.txt
+
+# Python Scripts
+update.py
+
+# MTG
+mtg/MagicCompRules*.pdf
