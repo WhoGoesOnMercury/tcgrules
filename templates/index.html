@@ -23,55 +23,66 @@
 </head>
 <body class="bg-[#F9F9FB] text-[#111827] antialiased min-h-screen flex flex-col selection:bg-slate-900 selection:text-white">
 
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-6">
-        <a href="/" class="flex items-center gap-2 font-semibold text-sm tracking-tight text-gray-900">
-          <span>TCG Rules</span>
-        </a>
-      </div>
+  <header id="topHeader" class="fixed top-0 inset-x-0 z-30 h-14 transition-colors duration-150">
+    <div class="w-full px-6 sm:px-8 h-full flex items-center justify-between">
+      <a href="/" onclick="event.preventDefault(); switchTab('rules'); resetHome();"
+         class="font-semibold text-sm tracking-tight text-white">
+        TCG Rules
+      </a>
 
-      <nav class="flex items-center gap-5 text-sm">
-        <button type="button" onclick="resetHome()" class="text-gray-500 hover:text-gray-900 transition-colors">
-          Index
+      <nav class="flex items-center gap-6 text-xs font-medium">
+        <button type="button" data-tab="rules" onclick="switchTab('rules')"
+                class="nav-tab text-white border-b border-white pb-0.5 transition-colors">
+          Rules
+        </button>
+        <button type="button" data-tab="cards" onclick="switchTab('cards')"
+                class="nav-tab text-gray-400 hover:text-white pb-0.5 transition-colors">
+          Cards
+        </button>
+        <button type="button" data-tab="forum" onclick="switchTab('forum')"
+                class="nav-tab text-gray-400 hover:text-white pb-0.5 transition-colors">
+          Forum
         </button>
       </nav>
     </div>
   </header>
 
-  <section class="bg-[#14151A] text-white border-b border-gray-800 py-14 sm:py-16 px-4">
-    <div class="max-w-3xl mx-auto">
-      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-        Comprehensive Rules &amp; Glossary
-      </h1>
-      <p class="mt-2 text-sm text-gray-400">
-        Direct lookup across official rule sections, keyword abilities, and game terminology.
-      </p>
-
-      <form id="searchForm" class="mt-6">
-        <div class="relative flex items-center bg-white rounded-md border border-gray-300 focus-within:border-gray-900 shadow-sm">
-          <svg class="w-4 h-4 text-gray-400 ml-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input
-            id="searchInput"
-            type="text"
-            placeholder="How does cascade work?"
-            class="w-full py-3 pl-3 pr-20 text-gray-900 placeholder-gray-400 text-sm focus:outline-none bg-transparent"
-            autocomplete="off"
-          />
-          <button type="submit"
-                  class="absolute right-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded transition-colors">
-            Search
-          </button>
+  <!-- TAB 1: RULES SEARCH VIEW -->
+  <div id="view-rules" class="tab-view flex-1 flex flex-col">
+    <section id="searchStage" class="bg-[#14151A] text-white min-h-screen flex flex-col justify-center px-4">
+      <div class="max-w-2xl w-full mx-auto">
+        <div id="heroHeading" class="mb-6">
+          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
+            Comprehensive Rules &amp; Glossary
+          </h1>
+          <p class="mt-2 text-sm text-gray-400">
+            Direct lookup across official rule sections, keyword abilities, and game terminology.
+          </p>
         </div>
-      </form>
-    </div>
-  </section>
 
-  <main class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 flex-1">
+        <form id="searchForm">
+          <div class="relative flex items-center bg-white rounded-md border border-gray-300 focus-within:border-gray-900 shadow-sm">
+            <svg class="w-4 h-4 text-gray-400 ml-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input
+              id="searchInput"
+              type="text"
+              autofocus
+              placeholder="How does cascade work?"
+              class="w-full py-3.5 pl-3 pr-20 text-gray-900 placeholder-gray-400 text-sm focus:outline-none bg-transparent"
+              autocomplete="off"
+            />
+            <button type="submit"
+                    class="absolute right-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium px-3.5 py-2 rounded transition-colors">
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-    <div id="resultsContainer" class="hidden">
+    <main id="resultsContainer" class="hidden max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 flex-1">
       <div class="flex items-center justify-between pb-4 mb-6 border-b border-gray-200">
         <h2 id="resultsHeading" class="text-sm font-medium text-gray-700">Results</h2>
         <button type="button" onclick="resetHome()" class="text-xs font-medium text-gray-500 hover:text-gray-900">
@@ -79,56 +90,129 @@
         </button>
       </div>
       <div id="resultsList" class="space-y-4"></div>
-    </div>
+    </main>
+  </div>
 
-    <div id="defaultFeed" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- TAB 2: CARDS VIEW -->
+  <div id="view-cards" class="tab-view hidden flex-1 flex flex-col">
+    <section class="bg-[#14151A] text-white pt-24 pb-10 px-4 border-b border-gray-800">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-xl font-semibold tracking-tight">Card Oracle &amp; Rulings</h1>
+        <p class="mt-1 text-sm text-gray-400">Search official card text and Gatherer rulings.</p>
 
-      <div class="bg-white rounded-md border border-gray-200 overflow-hidden">
-        <div class="px-5 py-3.5 border-b border-gray-200 bg-gray-50/60 flex items-center justify-between">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-600">Glossary Terms</h2>
-          <span class="text-[11px] font-mono text-gray-400">INDEX</span>
-        </div>
-        <div class="divide-y divide-gray-100">
-          {% for item in sample_glossary %}
-          <button type="button" onclick="quickSearch('{{ item.term }}')"
-                  class="w-full text-left px-5 py-3.5 hover:bg-gray-50 transition-colors flex items-start justify-between gap-4">
-            <div class="min-w-0">
-              <p class="font-medium text-gray-900 text-sm">{{ item.term }}</p>
-              <p class="text-xs text-gray-500 mt-0.5 truncate">{{ item.snippet }}</p>
-            </div>
-          </button>
-          {% endfor %}
+        <form id="cardSearchForm" class="mt-5">
+          <div class="relative flex items-center bg-white rounded-md border border-gray-300 focus-within:border-gray-900">
+            <svg class="w-4 h-4 text-gray-400 ml-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input
+              id="cardSearchInput"
+              type="text"
+              placeholder="Enter card name (e.g. Opposition, Blood Moon, Humility)..."
+              class="w-full py-3 pl-3 pr-20 text-gray-900 placeholder-gray-400 text-sm focus:outline-none bg-transparent"
+              autocomplete="off"
+            />
+            <button type="submit"
+                    class="absolute right-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium px-3.5 py-2 rounded transition-colors">
+              Lookup
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <main class="max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 flex-1">
+      <div id="cardResultsList" class="space-y-4">
+        <div class="bg-white rounded-md border border-gray-200 p-5 text-sm text-gray-500">
+          Enter a card name above to view its Oracle text and official rulings.
         </div>
       </div>
+    </main>
+  </div>
 
-      <div class="bg-white rounded-md border border-gray-200 overflow-hidden">
-        <div class="px-5 py-3.5 border-b border-gray-200 bg-gray-50/60 flex items-center justify-between">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-600">Rule Sections</h2>
-          <span class="text-[11px] font-mono text-gray-400">SECTIONS</span>
-        </div>
-        <div class="divide-y divide-gray-100">
-          {% for sec in sample_sections %}
-          <button type="button" onclick="quickSearch('{{ sec.title }}')"
-                  class="w-full text-left px-5 py-3.5 hover:bg-gray-50 transition-colors flex items-start justify-between gap-4">
-            <div class="min-w-0">
-              <p class="font-medium text-gray-900 text-sm truncate">{{ sec.title }}</p>
-              <p class="text-[11px] text-gray-400 mt-0.5 uppercase tracking-wide">{{ sec.tag }}</p>
-            </div>
-          </button>
-          {% endfor %}
-        </div>
+  <!-- TAB 3: FORUM VIEW -->
+  <div id="view-forum" class="tab-view hidden flex-1 flex flex-col">
+    <section class="bg-[#14151A] text-white pt-24 pb-10 px-4 border-b border-gray-800">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-xl font-semibold tracking-tight">Rules Discussions</h1>
+        <p class="mt-1 text-sm text-gray-400">Edge-case interactions and judge rulings.</p>
       </div>
-
-    </div>
-  </main>
+    </section>
+    <main class="max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 flex-1">
+      <div class="bg-white rounded-md border border-gray-200 p-6 text-sm text-gray-600">
+        Forum view ready for threads and ruling discussions.
+      </div>
+    </main>
+  </div>
 
   <script>
+    const topHeader = document.getElementById('topHeader');
+    const searchStage = document.getElementById('searchStage');
+    const heroHeading = document.getElementById('heroHeading');
     const searchForm = document.getElementById('searchForm');
     const searchInput = document.getElementById('searchInput');
-    const defaultFeed = document.getElementById('defaultFeed');
     const resultsContainer = document.getElementById('resultsContainer');
     const resultsHeading = document.getElementById('resultsHeading');
     const resultsList = document.getElementById('resultsList');
+
+    const cardSearchForm = document.getElementById('cardSearchForm');
+    const cardSearchInput = document.getElementById('cardSearchInput');
+    const cardResultsList = document.getElementById('cardResultsList');
+
+    let isSearchActive = false;
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+      const targetView = document.getElementById(`view-${tabName}`);
+      if (targetView) targetView.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        if (btn.dataset.tab === tabName) {
+          btn.classList.remove('text-gray-400');
+          btn.classList.add('text-white', 'border-b', 'border-white');
+        } else {
+          btn.classList.add('text-gray-400');
+          btn.classList.remove('text-white', 'border-b', 'border-white');
+        }
+      });
+
+      if (tabName !== 'rules' || isSearchActive) {
+        topHeader.classList.add('bg-[#14151A]/95', 'backdrop-blur-sm', 'border-b', 'border-gray-800');
+      } else {
+        topHeader.classList.remove('bg-[#14151A]/95', 'backdrop-blur-sm', 'border-b', 'border-gray-800');
+      }
+
+      if (tabName === 'cards') {
+        cardSearchInput.focus();
+      } else if (tabName === 'rules') {
+        searchInput.focus();
+      }
+    }
+
+    function setActiveMode(active) {
+      isSearchActive = active;
+      if (active) {
+        topHeader.classList.add('bg-[#14151A]/95', 'backdrop-blur-sm', 'border-b', 'border-gray-800');
+        searchStage.classList.remove('min-h-screen', 'justify-center');
+        searchStage.classList.add('pt-20', 'pb-7', 'border-b', 'border-gray-800');
+        heroHeading.classList.add('hidden');
+        resultsContainer.classList.remove('hidden');
+      } else {
+        topHeader.classList.remove('bg-[#14151A]/95', 'backdrop-blur-sm', 'border-b', 'border-gray-800');
+        searchStage.classList.add('min-h-screen', 'justify-center');
+        searchStage.classList.remove('pt-20', 'pb-7', 'border-b', 'border-gray-800');
+        heroHeading.classList.remove('hidden');
+        resultsContainer.classList.add('hidden');
+      }
+    }
+
+    function toggleCardFace(imgId, frontUrl, backUrl) {
+      const img = document.getElementById(imgId);
+      if (!img) return;
+      const isFront = img.dataset.face === 'front';
+      img.src = isFront ? backUrl : frontUrl;
+      img.dataset.face = isFront ? 'back' : 'front';
+    }
 
     function formatRuleLine(line) {
       const escaped = escapeHtml(line);
@@ -139,14 +223,20 @@
                   <span class="text-sm text-gray-700 leading-relaxed">${match[2]}</span>
                 </div>`;
       }
+      const rulingMatch = escaped.match(/^(Ruling\s*\([^)]+\):)\s+(.*)$/);
+      if (rulingMatch) {
+        return `<div class="flex items-baseline gap-3 py-1.5 border-b border-gray-100 last:border-0">
+                  <span class="font-mono text-[11px] font-medium text-gray-500 shrink-0">${rulingMatch[1]}</span>
+                  <span class="text-xs text-gray-700 leading-relaxed">${rulingMatch[2]}</span>
+                </div>`;
+      }
       return `<p class="text-sm text-gray-700 leading-relaxed py-1">${escaped}</p>`;
     }
 
     async function runSearch(query) {
       if (!query.trim()) return;
 
-      defaultFeed.classList.add('hidden');
-      resultsContainer.classList.remove('hidden');
+      setActiveMode(true);
       resultsHeading.textContent = `Querying "${query}"...`;
       resultsList.innerHTML = `<div class="bg-white p-5 rounded-md border border-gray-200 text-sm text-gray-500">Searching index...</div>`;
 
@@ -160,15 +250,17 @@
 
         if (!data.results || data.results.length === 0) {
           resultsHeading.textContent = `0 matches for "${query}"`;
-          resultsList.innerHTML = `<div class="bg-white p-5 rounded-md border border-gray-200 text-sm text-gray-600">No rules or glossary definitions matched that query.</div>`;
+          resultsList.innerHTML = `<div class="bg-white p-5 rounded-md border border-gray-200 text-sm text-gray-600">No rules, card oracle entries, or glossary definitions matched that query.</div>`;
           return;
         }
 
         resultsHeading.textContent = `${data.results.length} result${data.results.length === 1 ? '' : 's'} for "${query}"`;
-        resultsList.innerHTML = data.results.map(item => {
-          const badgeStyle = item.category === 'GLOSSARY'
-            ? 'bg-gray-100 text-gray-800 border-gray-200'
-            : 'bg-slate-900 text-white border-slate-900';
+        resultsList.innerHTML = data.results.map((item, idx) => {
+          const badgeStyle = item.category === 'CARD ORACLE'
+            ? 'bg-amber-50 text-amber-900 border-amber-200'
+            : item.category === 'GLOSSARY'
+              ? 'bg-gray-100 text-gray-800 border-gray-200'
+              : 'bg-slate-900 text-white border-slate-900';
 
           const lines = Array.isArray(item.lines) ? item.lines : (item.body || '').split('\n');
           const pointer = item.pointer || item.title || '';
@@ -176,6 +268,26 @@
             ? `<span class="font-mono text-[10px] font-medium tracking-wider uppercase px-2 py-0.5 rounded-sm border bg-white text-gray-600 border-gray-300">${escapeHtml(item.system)}</span>`
             : '';
           const linesHtml = lines.map(formatRuleLine).join('');
+
+          const flipBtnHtml = item.back_image_url
+            ? `<button type="button"
+                       onclick="toggleCardFace('search-img-${idx}', '${escapeHtml(item.image_url)}', '${escapeHtml(item.back_image_url)}')"
+                       class="mt-2 w-full text-center font-mono text-[11px] text-gray-600 hover:text-gray-900 border border-gray-200 rounded py-1 bg-gray-50 hover:bg-gray-100 transition-colors">
+                 Flip Face
+               </button>`
+            : '';
+
+          const cardImageHtml = item.image_url
+            ? `<div class="shrink-0 w-40 sm:w-44">
+                 <img id="search-img-${idx}"
+                      src="${escapeHtml(item.image_url)}"
+                      alt="${escapeHtml(pointer)}"
+                      data-face="front"
+                      loading="lazy"
+                      class="w-full rounded-[9px] border border-gray-200 bg-gray-100" />
+                 ${flipBtnHtml}
+               </div>`
+            : '';
 
           return `
             <article class="bg-white rounded-md border border-gray-200 overflow-hidden">
@@ -188,8 +300,11 @@
                 </div>
                 <span class="font-mono text-xs text-gray-500">${escapeHtml(pointer)}</span>
               </div>
-              <div class="px-5 py-4">
-                ${linesHtml}
+              <div class="px-5 py-4 flex flex-col sm:flex-row gap-5 items-start">
+                ${cardImageHtml}
+                <div class="flex-1 min-w-0">
+                  ${linesHtml}
+                </div>
               </div>
             </article>
           `;
@@ -200,19 +315,14 @@
       }
     }
 
-    function quickSearch(text) {
-      searchInput.value = text;
-      runSearch(text);
-    }
-
     function resetHome() {
       searchInput.value = '';
-      resultsContainer.classList.add('hidden');
-      defaultFeed.classList.remove('hidden');
+      setActiveMode(false);
+      searchInput.focus();
     }
 
     function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, m => ({
+      return String(str).replace(/[&<>"']/g, m => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
       }[m]));
     }
@@ -220,6 +330,88 @@
     searchForm.addEventListener('submit', e => {
       e.preventDefault();
       runSearch(searchInput.value);
+    });
+
+    cardSearchForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const query = cardSearchInput.value.trim();
+      if (!query) return;
+
+      cardResultsList.innerHTML = `<div class="bg-white p-5 rounded-md border border-gray-200 text-sm text-gray-500">Searching cards...</div>`;
+
+      try {
+        const res = await fetch(`/api/cards?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || `Server error (${res.status})`);
+        }
+
+        if (!data.cards || data.cards.length === 0) {
+          cardResultsList.innerHTML = `<div class="bg-white p-5 rounded-md border border-gray-200 text-sm text-gray-600">No cards matched "${escapeHtml(query)}".</div>`;
+          return;
+        }
+
+        cardResultsList.innerHTML = data.cards.map((card, idx) => {
+          const oracleHtml = (card.oracle_text || 'No text')
+            .split('\n')
+            .map(line => `<p class="text-sm text-gray-800 leading-relaxed py-0.5">${escapeHtml(line)}</p>`)
+            .join('');
+
+          const rulingsHtml = card.rulings && card.rulings.length > 0
+            ? `<div class="mt-4 pt-3 border-t border-gray-100 space-y-2">
+                 <p class="font-mono text-[10px] font-medium uppercase tracking-wider text-gray-400">Official Rulings</p>
+                 ${card.rulings.map(r => `
+                   <div class="text-xs text-gray-600 leading-relaxed flex gap-3">
+                     <span class="font-mono text-gray-400 shrink-0">${escapeHtml(r.date)}</span>
+                     <span>${escapeHtml(r.comment)}</span>
+                   </div>
+                 `).join('')}
+               </div>`
+            : '';
+
+          const flipButtonHtml = card.back_image_url
+            ? `<button type="button"
+                       onclick="toggleCardFace('card-img-${idx}', '${escapeHtml(card.image_url)}', '${escapeHtml(card.back_image_url)}')"
+                       class="mt-2 w-full text-center font-mono text-[11px] text-gray-600 hover:text-gray-900 border border-gray-200 rounded py-1 bg-gray-50 hover:bg-gray-100 transition-colors">
+                 Flip Face
+               </button>`
+            : '';
+
+          const imageBlockHtml = card.image_url
+            ? `<div class="shrink-0 w-44 sm:w-48">
+                 <img id="card-img-${idx}"
+                      src="${escapeHtml(card.image_url)}"
+                      alt="${escapeHtml(card.name)}"
+                      data-face="front"
+                      loading="lazy"
+                      class="w-full rounded-[10px] border border-gray-200 bg-gray-100" />
+                 ${flipButtonHtml}
+               </div>`
+            : '';
+
+          return `
+            <article class="bg-white rounded-md border border-gray-200 overflow-hidden">
+              <div class="px-5 py-3 bg-gray-50/70 border-b border-gray-200 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                  <span class="font-semibold text-sm text-gray-900">${escapeHtml(card.name)}</span>
+                  <span class="text-xs text-gray-500">${escapeHtml(card.type_line)}</span>
+                </div>
+                <span class="font-mono text-xs text-gray-600">${escapeHtml(card.mana_cost || '')}</span>
+              </div>
+              <div class="px-5 py-4 flex flex-col sm:flex-row gap-6 items-start">
+                ${imageBlockHtml}
+                <div class="flex-1 min-w-0">
+                  ${oracleHtml}
+                  ${rulingsHtml}
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+      } catch (err) {
+        cardResultsList.innerHTML = `<div class="bg-white p-5 rounded-md border border-red-200 text-sm text-red-700">${escapeHtml(err.message)}</div>`;
+      }
     });
   </script>
 </body>
